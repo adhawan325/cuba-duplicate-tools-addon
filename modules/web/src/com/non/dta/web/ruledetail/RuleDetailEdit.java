@@ -23,6 +23,8 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
 
     @Inject
     private LookupField baseField;
+
+
     @Inject
     private Metadata metadata;
     private Map<String, Object> myParams;
@@ -49,7 +51,6 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
         Rule rule = (Rule) myParams.get("rule");
 
         if( rule == null ) {
-            System.out.println("No Rule PasseD");
             rule = ruleDs.getItem();
         }
         if( rule != null ) {
