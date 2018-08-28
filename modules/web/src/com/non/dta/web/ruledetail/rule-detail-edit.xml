@@ -20,8 +20,10 @@
         <fieldGroup id="fieldGroup"
                     datasource="ruleDetailDs">
             <column width="250px">
-                <field property="baseRecordField"/>
-                <field property="matchingRecordField"/>
+                <field property="baseRecordField"
+                       visible="false"/>
+                <field property="matchingRecordField"
+                       visible="false"/>
                 <field property="matchType"/>
             </column>
         </fieldGroup>
