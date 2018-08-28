@@ -4,15 +4,21 @@ import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.PersistenceTools;
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.sys.listener.EntityListenerManager;
 import com.haulmont.cuba.security.entity.EntityOp;
 import com.non.dta.entity.Rule;
 import com.non.dta.entity.RuleDetail;
+import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 
 @Service(DuplicateRuleService.NAME)
@@ -30,8 +36,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     private Persistence persistence;
 
     @Override
-    public List<MetaClass> getAccessibleEntities()
-    {
+    public List<MetaClass> getAccessibleEntities() {
         List<MetaClass> classList = new ArrayList<MetaClass>();
         for (MetaClass metaClass : metadata.getTools().getAllPersistentMetaClasses()) {
             if (readPermitted(metaClass)) {
@@ -43,6 +48,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         }
         return classList;
     }
+
     private boolean readPermitted(MetaClass metaClass) {
         return entityOpPermitted(metaClass, EntityOp.READ);
     }
@@ -86,20 +92,43 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         list.add(s);
         for (RuleDetail detail : rule.getRuleDetail()) {
             i++;
-            s = " e." + detail.getMatchingRecordField() + " = ";
+            s = " e." + detail.getMatchingRecordField();
             Class matchingFieldType = null;
+            boolean isStandardEntity = false;
             Class matchingClass = metadata.getClass(rule.getMatchingRecordType()).getJavaClass();
             try {
                 matchingFieldType = matchingClass.getDeclaredField(detail.getMatchingRecordField()).getType();
+                if (matchingFieldType.getSuperclass().equals(StandardEntity.class)) {
+                    isStandardEntity = true;
+                }
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
+            if (isStandardEntity) {
+                s += ".id";
+            }
 
-            if (matchingFieldType == String.class) {
+            s += " = ";
+            if (matchingFieldType == String.class || matchingFieldType == Date.class) {
                 s += "'";
             }
-            s += entity.getValue(detail.getBaseRecordField());
-            if (matchingFieldType == String.class) {
+
+
+
+            if (isStandardEntity) {
+                StandardEntity standardEntity = entity.getValue(detail.getBaseRecordField());
+                s += "'" + standardEntity.getId() + "'";
+            } else if( matchingFieldType == DateTime.class )
+            {
+                Date date = entity.getValue(detail.getBaseRecordField());
+
+                Timestamp timestamp = new Timestamp(date.getTime());
+                s += new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(timestamp);
+            }
+            else {
+                s += entity.getValue(detail.getBaseRecordField());
+            }
+            if (matchingFieldType == String.class || matchingFieldType == Date.class) {
                 s += "'";
             }
             list.add(s);
