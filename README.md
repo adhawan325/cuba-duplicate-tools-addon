@@ -32,4 +32,4 @@ To use in your UI:
     }
 ```
 
-![screenshot]https://s3-us-west-1.amazonaws.com/909technologies/Capture.PNG)
+![screenshot] (https://s3-us-west-1.amazonaws.com/909technologies/Capture.PNG)
