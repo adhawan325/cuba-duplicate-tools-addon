@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.non.dta.web.rule.RuleEdit"
+        datasource="ruleDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.non.dta.web.rule">
+    <dsContext>
+        <datasource id="ruleDs"
+                    class="com.non.dta.entity.Rule"
+                    view="rule-view">
+            <collectionDatasource id="ruleDetailDs"
+                                  property="ruleDetail"/>
+        </datasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="ruleDs">
+            <column width="250px">
+                <field property="name"
+                       required="true"/>
+                <field property="status"
+                       required="true"/>
+                <field property="description"
+                       rows="5"/>
+                <field property="baseRecordType"
+                       visible="false"/>
+                <field property="matchingRecordType"
+                       visible="false"/>
+                <field property="caseSensitive"/>
+            </column>
+        </fieldGroup>
+        <hbox spacing="true">
+            <lookupField id="baseEntityLookup"
+                         caption="Base Entity"/>
+            <lookupField id="targetLookup"
+                         caption="Matching Entity"/>
+        </hbox>
+        <groupBox id="ruleDetailBox"
+                  caption="msg://com.non.dta.entity/Rule.ruleDetail">
+            <table id="ruleDetailTable"
+                   height="200px"
+                   width="100%">
+                <actions>
+                    <action id="create"/>
+                    <action id="edit"/>
+                    <action id="remove"/>
+                </actions>
+                <columns>
+                    <column id="baseRecordField"/>
+                    <column id="matchingRecordField"/>
+                    <column id="matchType"/>
+                </columns>
+                <rows datasource="ruleDetailDs"/>
+                <buttonsPanel>
+                    <button id="createBtn"
+                            action="ruleDetailTable.create"
+                            caption="Create"/>
+                    <button action="ruleDetailTable.edit"/>
+                    <button action="ruleDetailTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

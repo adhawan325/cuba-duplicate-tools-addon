@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="dta$RuleDetail.browse"
+            template="com/non/dta/web/ruledetail/rule-detail-browse.xml"/>
+    <screen id="dta$RuleDetail.edit"
+            template="com/non/dta/web/ruledetail/rule-detail-edit.xml"/>
+    <screen id="dta$Rule.edit"
+            template="com/non/dta/web/rule/rule-edit.xml"/>
+    <screen id="dta$Rule.browse"
+            template="com/non/dta/web/rule/rule-browse.xml"/>
+</screen-config>

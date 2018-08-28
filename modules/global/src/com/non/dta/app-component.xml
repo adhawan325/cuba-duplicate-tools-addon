@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               dependsOn="com.haulmont.cuba">
+    <module blocks="*"
+            name="global">
+        <artifact appJar="true"
+                  name="dta-global"/>
+        <property name="cuba.persistenceConfig"
+                  value="+com/non/dta/persistence.xml"/>
+        <property name="cuba.metadataConfig"
+                  value="+com/non/dta/metadata.xml"/>
+        <property name="cuba.viewsConfig"
+                  value="+com/non/dta/views.xml"/>
+    </module>
+    <module blocks="core"
+            dependsOn="global"
+            name="core">
+        <artifact appJar="true"
+                  name="dta-core"/>
+        <artifact classifier="db"
+                  configuration="dbscripts"
+                  ext="zip"
+                  name="dta-core"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/non/dta/spring.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.non.dta.core"/>
+    </module>
+    <module blocks="web"
+            dependsOn="global"
+            name="web">
+        <artifact appJar="true"
+                  name="dta-web"/>
+        <artifact classifier="web"
+                  configuration="webcontent"
+                  ext="zip"
+                  name="dta-web"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/non/dta/web-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/non/dta/web-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig"
+                  value="+com/non/dta/web-screens.xml"/>
+        <property name="cuba.menuConfig"
+                  value="+com/non/dta/web-menu.xml"/>
+        <property name="cuba.permissionConfig"
+                  value="+com/non/dta/web-permissions.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.non.dta.web"/>
+    </module>
+</app-component>

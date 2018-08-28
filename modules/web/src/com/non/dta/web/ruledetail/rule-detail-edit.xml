@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.non.dta.web.ruledetail.RuleDetailEdit"
+        datasource="ruleDetailDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.non.dta.web.ruledetail">
+    <dsContext>
+        <datasource id="ruleDetailDs"
+                    class="com.non.dta.entity.RuleDetail"
+                    view="_local">
+            <datasource id="ruleDs"
+                        property="rule"/>
+        </datasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="ruleDetailDs">
+            <column width="250px">
+                <field property="baseRecordField"
+                       visible="false"/>
+                <field property="matchingRecordField"
+                       visible="false"/>
+                <field property="matchType"/>
+            </column>
+        </fieldGroup>
+        <hbox spacing="true">
+            <lookupField id="baseField"
+                         caption="Base Entity Field"/>
+            <lookupField id="targetField"
+                         caption="Matching Entity Field"/>
+        </hbox>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

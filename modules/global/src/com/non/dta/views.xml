@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.non.dta.entity.Rule"
+          extends="_local"
+          name="rule-view"
+          systemProperties="true">
+        <property name="ruleDetail"
+                  view="_minimal"/>
+    </view>
+</views>

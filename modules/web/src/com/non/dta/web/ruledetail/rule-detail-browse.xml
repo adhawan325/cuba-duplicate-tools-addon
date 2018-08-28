@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.non.dta.web.ruledetail.RuleDetailBrowse"
+        focusComponent="ruleDetailsTable"
+        lookupComponent="ruleDetailsTable"
+        messagesPack="com.non.dta.web.ruledetail">
+    <dsContext>
+        <groupDatasource id="ruleDetailsDs"
+                         class="com.non.dta.entity.RuleDetail"
+                         view="_local">
+            <query>
+                <![CDATA[select e from dta$RuleDetail e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="ruleDetailsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="ruleDetailsTable"
+                datasource="ruleDetailsDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="ruleDetailsTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="baseRecordField"/>
+                <column id="matchingRecordField"/>
+                <column id="matchType"/>
+            </columns>
+            <rows datasource="ruleDetailsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="ruleDetailsTable.create"/>
+                <button id="editBtn"
+                        action="ruleDetailsTable.edit"/>
+                <button id="removeBtn"
+                        action="ruleDetailsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>
