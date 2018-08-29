@@ -1,4 +1,4 @@
-# cuba-duplicate-tools-addon
+# CUBA Duplicate Detection Rules Add-on
 
 This add-on allows you to configure duplicate detection rules for entities.  You define a "base" and a "match" entity, define which fields to "match" on, and add a small snippet of code to your UI.  The add-on does the rest.
 
