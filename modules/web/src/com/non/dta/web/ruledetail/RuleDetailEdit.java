@@ -49,7 +49,7 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
     @Override
     protected void postInit() {
         Rule rule = (Rule) myParams.get("rule");
-
+        System.out.println(myParams.toString());
         if( rule == null ) {
             rule = ruleDs.getItem();
         }

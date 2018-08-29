@@ -5,6 +5,6 @@
           name="rule-view"
           systemProperties="true">
         <property name="ruleDetail"
-                  view="_minimal"/>
+                  view="_local"/>
     </view>
 </views>
