@@ -87,11 +87,14 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         ArrayList<String> list = new ArrayList<String>(10);
         int i = 0;
         // id check
-        String s = " e.id <> '" + entity.getId() + "' ";
-        list.add(s);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(" e.id <> '" + entity.getId() + "' ");
+        list.add(sb.toString());
         for (RuleDetail detail : rule.getRuleDetail()) {
             i++;
-            s = " e." + detail.getMatchingRecordField();
+            sb = new StringBuffer();
+            sb.append(" e." + detail.getMatchingRecordField());
             Class matchingFieldType = null;
             boolean isStandardEntity = false;
             Class matchingClass = metadata.getClass(rule.getMatchingRecordType()).getJavaClass();
@@ -104,33 +107,33 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
                 e.printStackTrace();
             }
             if (isStandardEntity) {
-                s += ".id";
+                sb.append(".id");
             }
 
-            s += " = ";
+            sb.append(" = ");
             if (matchingFieldType == String.class || matchingFieldType == Date.class) {
-                s += "'";
+                sb.append("'");
             }
 
 
 
             if (isStandardEntity) {
                 StandardEntity standardEntity = entity.getValue(detail.getBaseRecordField());
-                s += "'" + standardEntity.getId() + "'";
+                sb.append("'" + standardEntity.getId() + "'");
             } else if( matchingFieldType == DateTime.class )
             {
                 Date date = entity.getValue(detail.getBaseRecordField());
 
                 Timestamp timestamp = new Timestamp(date.getTime());
-                s += new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(timestamp);
+                sb.append(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(timestamp));
             }
             else {
-                s += entity.getValue(detail.getBaseRecordField());
+                sb.append(entity.getValue(detail.getBaseRecordField()).toString());
             }
             if (matchingFieldType == String.class || matchingFieldType == Date.class) {
-                s += "'";
+                sb.append("'");
             }
-            list.add(s);
+            list.add(sb.toString());
         }
 
         return list;
@@ -148,15 +151,16 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     }
 
     private int findDuplicateEntity(String type, List<String> params) {
-        String queryString = "select e from " + type + " e where ";
+        StringBuffer sb = new StringBuffer();
+        sb.append("select e from " + type + " e where ");
         for (int i = 0; i < params.size(); i++) {
             if (i > 0) {
-                queryString += " and ";
+                sb.append(" and ");
             }
-            queryString += params.get(i);
+           sb.append(params.get(i));
         }
         LoadContext loadContext = LoadContext.create(metadata.getSession().getClass(type).getJavaClass());
-        LoadContext.Query query = LoadContext.createQuery(queryString);
+        LoadContext.Query query = LoadContext.createQuery(sb.toString());
         loadContext.setQuery(query);
         return (dataManager.loadList(loadContext)).size();
     }
