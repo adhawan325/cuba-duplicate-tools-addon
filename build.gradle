@@ -19,7 +19,7 @@ buildscript {
     }
 }
 
-def modulePrefix = 'dta'
+def modulePrefix = 'nondta'
 
 def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
