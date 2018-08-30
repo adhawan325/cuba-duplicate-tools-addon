@@ -15,7 +15,7 @@ Additionally, Associations to other records are supported (as long as the other 
 To use in your UI:
 1. Add the menu item in your web-menu.xml at a location of your choosing: 
 ```
-<item screen="dta$Rule.browse"/>
+ <item screen="nondta$Rule.browse"/>
 ```
 2. Use this screen to setup rules.  Rules can be for same entity, or different entities.  
 3. Once rules are setup, you can use the add-on in your UI.  Add the service to your controller and use the postValidateHook to invoke the duplicate check method
