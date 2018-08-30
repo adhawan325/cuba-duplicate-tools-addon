@@ -12,6 +12,7 @@ import com.non.dta.entity.Rule;
 import com.non.dta.entity.RuleDetail;
 import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
 import javax.inject.Inject;
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service(DuplicateRuleService.NAME)
 public class DuplicateRuleServiceBean implements DuplicateRuleService {
@@ -63,8 +65,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         boolean isDuplicate = false;
         List<Rule> rules = getConfiguredRulesForEntity(entity.getMetaClass().toString());
         for (Rule rule : rules) {
-            List<String> params = buildParams(entity, rule);
-            if (rule.getRuleDetail() != null && rule.getRuleDetail().size() > 0 && findDuplicateEntity(rule.getMatchingRecordType(), params) > 0) {
+            if (rule.getRuleDetail() != null && rule.getRuleDetail().size() > 0 && findDuplicateEntityByQuery(entity, rule) > 0) {
                 isDuplicate = true;
                 break;
             }
@@ -83,62 +84,6 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     }
 
 
-    private List<String> buildParams(Entity entity, Rule rule) {
-        ArrayList<String> list = new ArrayList<String>(10);
-        int i = 0;
-        // id check
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(" e.id <> '" + entity.getId() + "' ");
-        list.add(sb.toString());
-        for (RuleDetail detail : rule.getRuleDetail()) {
-            i++;
-            sb = new StringBuffer();
-            sb.append(" e." + detail.getMatchingRecordField());
-            Class matchingFieldType = null;
-            boolean isStandardEntity = false;
-            Class matchingClass = metadata.getClass(rule.getMatchingRecordType()).getJavaClass();
-            try {
-                matchingFieldType = matchingClass.getDeclaredField(detail.getMatchingRecordField()).getType();
-                if (matchingFieldType.getSuperclass().equals(StandardEntity.class)) {
-                    isStandardEntity = true;
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-            if (isStandardEntity) {
-                sb.append(".id");
-            }
-
-            sb.append(" = ");
-            if (matchingFieldType == String.class || matchingFieldType == Date.class) {
-                sb.append("'");
-            }
-
-
-
-            if (isStandardEntity) {
-                StandardEntity standardEntity = entity.getValue(detail.getBaseRecordField());
-                sb.append("'" + standardEntity.getId() + "'");
-            } else if( matchingFieldType == DateTime.class )
-            {
-                Date date = entity.getValue(detail.getBaseRecordField());
-
-                Timestamp timestamp = new Timestamp(date.getTime());
-                sb.append(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(timestamp));
-            }
-            else {
-                sb.append(entity.getValue(detail.getBaseRecordField()).toString());
-            }
-            if (matchingFieldType == String.class || matchingFieldType == Date.class) {
-                sb.append("'");
-            }
-            list.add(sb.toString());
-        }
-
-        return list;
-    }
-
     private boolean isRuleConfiguredForModifiedFields(Entity entity, Rule rule) {
         boolean isConfigured = false;
         for (RuleDetail detail : rule.getRuleDetail()) {
@@ -150,17 +95,32 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         return isConfigured;
     }
 
-    private int findDuplicateEntity(String type, List<String> params) {
+    private int findDuplicateEntityByQuery(Entity entity, Rule rule) {
         StringBuffer sb = new StringBuffer();
-        sb.append("select e from " + type + " e where ");
-        for (int i = 0; i < params.size(); i++) {
-            if (i > 0) {
-                sb.append(" and ");
+        sb.append("select e from " + rule.getMatchingRecordType() + " e where e.id <> :entityId ");
+
+        for (RuleDetail detail : rule.getRuleDetail()) {
+            if( entity.getValue(detail.getBaseRecordField()) != null ) {
+                sb.append(" and e.");
+                sb.append(detail.getMatchingRecordField());
+                sb.append(" = :");
+                sb.append(detail.getMatchingRecordField());
             }
-           sb.append(params.get(i));
         }
-        LoadContext loadContext = LoadContext.create(metadata.getSession().getClass(type).getJavaClass());
-        LoadContext.Query query = LoadContext.createQuery(sb.toString());
+        LoadContext loadContext = LoadContext.create(metadata.getSession().getClass(rule.getMatchingRecordType()).getJavaClass());
+        LoadContext.Query query = new LoadContext.Query(sb.toString());
+        query.setParameter("entityId", entity.getId());
+        for (RuleDetail detail : rule.getRuleDetail()) {
+            if( entity.getValue(detail.getBaseRecordField()) != null ) {
+                query.setParameter(detail.getMatchingRecordField(), entity.getValue(detail.getBaseRecordField()));
+            }
+        }
+
+        System.out.println(query.getQueryString());
+        for( Map.Entry<String,Object> entry : query.getParameters().entrySet() )
+        {
+            System.out.println(entry.getKey() + ": " + entry.getValue().toString());
+        }
         loadContext.setQuery(query);
         return (dataManager.loadList(loadContext)).size();
     }
