@@ -19,7 +19,7 @@ buildscript {
     }
 }
 
-def modulePrefix = 'nondta'
+def modulePrefix = 'dta'
 
 def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
@@ -116,7 +116,7 @@ configure(coreModule) {
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
         dbms = 'hsql'
         host = 'localhost'
-        dbName = 'nondta'
+        dbName = 'dta'
         dbUser = 'sa'
         dbPassword = ''
     }
@@ -124,7 +124,7 @@ configure(coreModule) {
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
         dbms = 'hsql'
         host = 'localhost'
-        dbName = 'nondta'
+        dbName = 'dta'
         dbUser = 'sa'
         dbPassword = ''
     }
@@ -221,7 +221,7 @@ subprojects {
         // metadata
         pkg {
             repo = 'cuba-duplicate-tools-addon'           // your repository name
-            name = 'dta'  // package name - it will be created upon upload
+            name = 'nondta'  // package name - it will be created upon upload
             desc = 'CUBA Duplicate Detection Add-On'  // optional package description
 
             websiteUrl = 'https://github.com/adhawan325/cuba-duplicate-tools-addon'
