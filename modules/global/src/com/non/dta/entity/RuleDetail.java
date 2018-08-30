@@ -11,8 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @NamePattern("%s %s %s|baseRecordField,matchingRecordField,matchType")
-@Table(name = "DTA_RULE_DETAIL")
-@Entity(name = "dta$RuleDetail")
+@Table(name = "NONDTA_RULE_DETAIL")
+@Entity(name = "nondta$RuleDetail")
 public class RuleDetail extends StandardEntity {
     private static final long serialVersionUID = 3815590654277496697L;
 

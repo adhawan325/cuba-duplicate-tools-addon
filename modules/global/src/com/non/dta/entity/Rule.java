@@ -14,8 +14,8 @@ import java.util.List;
 import javax.persistence.OneToMany;
 
 @NamePattern("%s %s %s|baseRecordType,matchingRecordType,status")
-@Table(name = "DTA_RULE")
-@Entity(name = "dta$Rule")
+@Table(name = "NONDTA_RULE")
+@Entity(name = "nondta$Rule")
 public class Rule extends StandardEntity {
     private static final long serialVersionUID = -7408722613119771537L;
 

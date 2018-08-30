@@ -13,7 +13,7 @@
         <param-name>appPropertiesConfig</param-name>
         <param-value>classpath:com/non/dta/web-app.properties
             /WEB-INF/local.app.properties
-            "file:${catalina.base}/conf/dta/local.app.properties"</param-value>
+            "file:${catalina.base}/conf/nondta/local.app.properties"</param-value>
     </context-param>
     <!--Application components-->
     <context-param>

@@ -75,7 +75,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
 
     private List<Rule> getConfiguredRulesForEntity(String entityType) {
         LoadContext<Rule> loadContext = LoadContext.create(Rule.class);
-        LoadContext.Query query = LoadContext.createQuery("select e from dta$Rule e where e.baseRecordType = :baseType and e.status = 20")
+        LoadContext.Query query = LoadContext.createQuery("select e from nondta$Rule e where e.baseRecordType = :baseType and e.status = 20")
                 .setParameter("baseType", entityType);
         loadContext.setView("rule-view");
         loadContext.setQuery(query);

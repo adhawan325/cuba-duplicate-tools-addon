@@ -10,7 +10,7 @@
                          class="com.non.dta.entity.RuleDetail"
                          view="_local">
             <query>
-                <![CDATA[select e from dta$RuleDetail e]]>
+                <![CDATA[select e from nondta$RuleDetail e]]>
             </query>
         </groupDatasource>
     </dsContext>

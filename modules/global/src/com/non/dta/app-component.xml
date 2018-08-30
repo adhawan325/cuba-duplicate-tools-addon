@@ -4,7 +4,7 @@
     <module blocks="*"
             name="global">
         <artifact appJar="true"
-                  name="dta-global"/>
+                  name="nondta-global"/>
         <property name="cuba.persistenceConfig"
                   value="+com/non/dta/persistence.xml"/>
         <property name="cuba.metadataConfig"
@@ -16,11 +16,11 @@
             dependsOn="global"
             name="core">
         <artifact appJar="true"
-                  name="dta-core"/>
+                  name="nondta-core"/>
         <artifact classifier="db"
                   configuration="dbscripts"
                   ext="zip"
-                  name="dta-core"/>
+                  name="nondta-core"/>
         <property name="cuba.springContextConfig"
                   value="+com/non/dta/spring.xml"/>
         <property name="cuba.mainMessagePack"
@@ -30,11 +30,11 @@
             dependsOn="global"
             name="web">
         <artifact appJar="true"
-                  name="dta-web"/>
+                  name="nondta-web"/>
         <artifact classifier="web"
                   configuration="webcontent"
                   ext="zip"
-                  name="dta-web"/>
+                  name="nondta-web"/>
         <property name="cuba.springContextConfig"
                   value="+com/non/dta/web-spring.xml"/>
         <property name="cuba.dispatcherSpringContextConfig"

@@ -1,5 +1,5 @@
--- begin DTA_RULE
-create table DTA_RULE (
+-- begin NONDTA_RULE
+create table NONDTA_RULE (
     ID varchar(36) not null,
     VERSION integer not null,
     CREATE_TS timestamp,
@@ -18,9 +18,9 @@ create table DTA_RULE (
     --
     primary key (ID)
 )^
--- end DTA_RULE
--- begin DTA_RULE_DETAIL
-create table DTA_RULE_DETAIL (
+-- end NONDTA_RULE
+-- begin NONDTA_RULE_DETAIL
+create table NONDTA_RULE_DETAIL (
     ID varchar(36) not null,
     VERSION integer not null,
     CREATE_TS timestamp,
@@ -37,4 +37,4 @@ create table DTA_RULE_DETAIL (
     --
     primary key (ID)
 )^
--- end DTA_RULE_DETAIL
+-- end NONDTA_RULE_DETAIL
