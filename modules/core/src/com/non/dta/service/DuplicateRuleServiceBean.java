@@ -98,7 +98,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         sb.append("select e from " + rule.getMatchingRecordType() + " e where e.id <> :entityId ");
         Map<String, Object> params = new HashMap<String, Object>();
         for (RuleDetail detail : rule.getRuleDetail()) {
-            Class matchingClass = (ReflectionUtils.findField(metadata.getClass(rule.getMatchingRecordType()).getJavaClass(), detail.getMatchingRecordField())).getClass();
+            Class matchingClass = (ReflectionUtils.findField(metadata.getClass(rule.getMatchingRecordType()).getJavaClass(), detail.getMatchingRecordField())).getType();
             System.out.println(matchingClass.getCanonicalName());
             if (matchingClass.getSuperclass().equals(StandardEntity.class)) {
                 isStandardEntity = true;
@@ -126,11 +126,6 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         query.setParameter("entityId", entity.getId());
         for ( Map.Entry<String, Object> param: params.entrySet() ){
             query.setParameter(param.getKey(), param.getValue());
-        }
-        System.out.println(query.getQueryString());
-        for( Map.Entry<String,Object> entry : query.getParameters().entrySet() )
-        {
-            System.out.println(entry.getKey() + ": " + entry.getValue().toString());
         }
         loadContext.setQuery(query);
         return (dataManager.loadList(loadContext)).size();
