@@ -2,7 +2,6 @@ package com.non.dta.web.ruledetail;
 
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaProperty;
-import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.LookupField;
@@ -41,7 +40,7 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
         Map<String, Object> options = new TreeMap<>();
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-                   options.put(metaProperty.getName().toString(), metaProperty);
+                   options.put(metaProperty.getName(), metaProperty);
             }
         return options;
     }
@@ -49,7 +48,6 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
     @Override
     protected void postInit() {
         Rule rule = (Rule) myParams.get("rule");
-        System.out.println(myParams.toString());
         if( rule == null ) {
             rule = ruleDs.getItem();
         }

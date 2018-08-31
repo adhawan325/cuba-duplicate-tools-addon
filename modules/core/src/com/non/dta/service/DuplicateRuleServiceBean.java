@@ -35,7 +35,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
 
     @Override
     public List<MetaClass> getAccessibleEntities() {
-        List<MetaClass> classList = new ArrayList<MetaClass>();
+        List<MetaClass> classList = new ArrayList<>();
         for (MetaClass metaClass : metadata.getTools().getAllPersistentMetaClasses()) {
             if (readPermitted(metaClass)) {
                 Class javaClass = metaClass.getJavaClass();
@@ -62,7 +62,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         boolean isDuplicate = false;
         List<Rule> rules = getConfiguredRulesForEntity(entity.getMetaClass().toString());
         for (Rule rule : rules) {
-            if (rule.getRuleDetail() != null && rule.getRuleDetail().size() > 0 && findDuplicateEntityByQuery(entity, rule) > 0) {
+            if (rule.getRuleDetail() != null && !rule.getRuleDetail().isEmpty() && findDuplicateEntityByQuery(entity, rule) > 0) {
                 isDuplicate = true;
                 break;
             }
@@ -81,22 +81,13 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     }
 
 
-    private boolean isRuleConfiguredForModifiedFields(Entity entity, Rule rule) {
-        boolean isConfigured = false;
-        for (RuleDetail detail : rule.getRuleDetail()) {
-            if (persistenceTools.isDirty(entity, detail.getBaseRecordField())) {
-                isConfigured = true;
-                break;
-            }
-        }
-        return isConfigured;
-    }
+
 
     private int findDuplicateEntityByQuery(Entity entity, Rule rule) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean isStandardEntity = false;
         sb.append("select e from " + rule.getMatchingRecordType() + " e where e.id <> :entityId ");
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         for (RuleDetail detail : rule.getRuleDetail()) {
             Class matchingClass = (ReflectionUtils.findField(metadata.getClass(rule.getMatchingRecordType()).getJavaClass(), detail.getMatchingRecordField())).getType();
             if (matchingClass.getSuperclass().equals(StandardEntity.class)) {

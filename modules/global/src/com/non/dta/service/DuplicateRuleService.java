@@ -3,7 +3,6 @@ package com.non.dta.service;
 
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.entity.Entity;
-import com.non.dta.entity.Rule;
 
 import java.util.List;
 

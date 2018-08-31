@@ -1,15 +1,10 @@
 package com.non.dta.web.rule;
 
 import com.haulmont.chile.core.model.MetaClass;
-import com.haulmont.chile.core.model.MetaProperty;
-import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
-import com.haulmont.cuba.security.entity.EntityOp;
 import com.non.dta.entity.Rule;
 import com.non.dta.service.DuplicateRuleService;
 
@@ -36,13 +31,7 @@ public class RuleEdit extends AbstractEditor<Rule> {
     private CheckBox caseSensitiveField;
     @Named("ruleDetailTable.create")
     private CreateAction ruleDetailTableCreateAction;
-    private boolean isNewItem = false;
 
-    @Override
-    protected void initNewItem(Rule item) {
-        isNewItem = true;
-        super.initNewItem(item);
-    }
 
     @Override
     public void init(Map<String, Object> params) {
@@ -67,16 +56,6 @@ public class RuleEdit extends AbstractEditor<Rule> {
                     rule.setMatchingRecordType(targetClass.getName());
                 }
         );
-
-        ruleDetailTableCreateAction.setBeforeActionPerformedHandler(new Action.BeforeActionPerformedHandler() {
-            @Override
-            public boolean beforeActionPerformed() {
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("rule", getItem());
-                ruleDetailTableCreateAction.setWindowParams(params);
-                return true;
-            }
-        });
 
         super.postInit();
     }
