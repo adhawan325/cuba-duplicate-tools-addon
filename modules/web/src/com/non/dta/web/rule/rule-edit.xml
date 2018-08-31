@@ -53,6 +53,7 @@
                     <column id="baseRecordField"/>
                     <column id="matchingRecordField"/>
                     <column id="matchType"/>
+                    <column id="useId"/>
                 </columns>
                 <rows datasource="ruleDetailDs"/>
                 <buttonsPanel>

@@ -17,10 +17,7 @@ import org.springframework.util.ReflectionUtils;
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service(DuplicateRuleService.NAME)
 public class DuplicateRuleServiceBean implements DuplicateRuleService {
@@ -97,25 +94,39 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
 
     private int findDuplicateEntityByQuery(Entity entity, Rule rule) {
         StringBuffer sb = new StringBuffer();
+        boolean isStandardEntity = false;
         sb.append("select e from " + rule.getMatchingRecordType() + " e where e.id <> :entityId ");
-
+        Map<String, Object> params = new HashMap<String, Object>();
         for (RuleDetail detail : rule.getRuleDetail()) {
-            if( entity.getValue(detail.getBaseRecordField()) != null ) {
+            Class matchingClass = (ReflectionUtils.findField(metadata.getClass(rule.getMatchingRecordType()).getJavaClass(), detail.getMatchingRecordField())).getClass();
+            System.out.println(matchingClass.getCanonicalName());
+            if (matchingClass.getSuperclass().equals(StandardEntity.class)) {
+                isStandardEntity = true;
+            }
+            if (entity.getValue(detail.getBaseRecordField()) != null) {
                 sb.append(" and e.");
                 sb.append(detail.getMatchingRecordField());
+                if (isStandardEntity) {
+                    sb.append(".id");
+                }
                 sb.append(" = :");
                 sb.append(detail.getMatchingRecordField());
+
+                if (isStandardEntity) {
+                    params.put(detail.getMatchingRecordField(), entity.getValueEx(detail.getMatchingRecordField() + ".id"));
+                } else {
+                    params.put(detail.getMatchingRecordField(), entity.getValue(detail.getMatchingRecordField()));
+                }
             }
+            isStandardEntity = false;
         }
+
         LoadContext loadContext = LoadContext.create(metadata.getSession().getClass(rule.getMatchingRecordType()).getJavaClass());
         LoadContext.Query query = new LoadContext.Query(sb.toString());
         query.setParameter("entityId", entity.getId());
-        for (RuleDetail detail : rule.getRuleDetail()) {
-            if( entity.getValue(detail.getBaseRecordField()) != null ) {
-                query.setParameter(detail.getMatchingRecordField(), entity.getValue(detail.getBaseRecordField()));
-            }
+        for ( Map.Entry<String, Object> param: params.entrySet() ){
+            query.setParameter(param.getKey(), param.getValue());
         }
-
         System.out.println(query.getQueryString());
         for( Map.Entry<String,Object> entry : query.getParameters().entrySet() )
         {

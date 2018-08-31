@@ -4,7 +4,7 @@ This add-on allows you to configure duplicate detection rules for entities.  You
 
 Add custom application component to your project (change the version part if needed):
 ``` 
-com.non.dta:dta-core:1.0.0
+com.non.dta:nondta-global:1.0.0
 ```
 
 This add-on allows cuba platform users to configure rules to prevent "duplicate" data entry into the system.  For example, if you want to ensure that no two customer's can have the same email address, you can set up a duplicate detection rule to prevent users from creating duplicate data.

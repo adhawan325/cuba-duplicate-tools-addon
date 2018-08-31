@@ -33,6 +33,7 @@ create table NONDTA_RULE_DETAIL (
     BASE_RECORD_FIELD varchar(255) not null,
     MATCHING_RECORD_FIELD varchar(255) not null,
     MATCH_TYPE integer not null,
+    USE_ID boolean,
     RULE_ID varchar(36),
     --
     primary key (ID)

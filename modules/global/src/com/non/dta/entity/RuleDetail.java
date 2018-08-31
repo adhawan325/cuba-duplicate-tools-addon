@@ -28,9 +28,21 @@ public class RuleDetail extends StandardEntity {
     @Column(name = "MATCH_TYPE", nullable = false)
     protected Integer matchType;
 
+    @Column(name = "USE_ID")
+    protected Boolean useId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RULE_ID")
     protected Rule rule;
+
+    public void setUseId(Boolean useId) {
+        this.useId = useId;
+    }
+
+    public Boolean getUseId() {
+        return useId;
+    }
+
 
     public void setRule(Rule rule) {
         this.rule = rule;
