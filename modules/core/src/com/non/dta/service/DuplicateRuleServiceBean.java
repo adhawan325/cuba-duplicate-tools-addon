@@ -10,14 +10,14 @@ import com.haulmont.cuba.core.sys.listener.EntityListenerManager;
 import com.haulmont.cuba.security.entity.EntityOp;
 import com.non.dta.entity.Rule;
 import com.non.dta.entity.RuleDetail;
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import javax.inject.Inject;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service(DuplicateRuleService.NAME)
 public class DuplicateRuleServiceBean implements DuplicateRuleService {
@@ -99,7 +99,6 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
         Map<String, Object> params = new HashMap<String, Object>();
         for (RuleDetail detail : rule.getRuleDetail()) {
             Class matchingClass = (ReflectionUtils.findField(metadata.getClass(rule.getMatchingRecordType()).getJavaClass(), detail.getMatchingRecordField())).getType();
-            System.out.println(matchingClass.getCanonicalName());
             if (matchingClass.getSuperclass().equals(StandardEntity.class)) {
                 isStandardEntity = true;
             }
@@ -111,7 +110,6 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
                 }
                 sb.append(" = :");
                 sb.append(detail.getMatchingRecordField());
-
                 if (isStandardEntity) {
                     params.put(detail.getMatchingRecordField(), entity.getValueEx(detail.getMatchingRecordField() + ".id"));
                 } else {
