@@ -3,37 +3,48 @@ package com.non.dta.web.ruledetail;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaProperty;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
+import com.haulmont.cuba.gui.components.CheckBox;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.non.dta.entity.Rule;
 import com.non.dta.entity.RuleDetail;
+import com.non.dta.entity.RuleMatchType;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
-    @Inject
-    private Datasource<Rule> ruleDs;
-
     @Inject
     private LookupField targetField;
 
     @Inject
     private LookupField baseField;
 
-
     @Inject
     private Metadata metadata;
-    private Map<String, Object> myParams;
+
+    @Named("fieldGroup.matchType")
+    private LookupField matchTypeField;
+
+    @Named("fieldGroup.useId")
+    private CheckBox useIdField;
 
     @Override
     public void init(Map<String, Object> params) {
         targetField.setRequired(true);
         baseField.setRequired(true);
-        myParams = params;
+        useIdField.setVisible(false);
         super.init(params);
+    }
+
+    @Override
+    protected void initNewItem(RuleDetail item) {
+        item.setMatchType(RuleMatchType.EXACT_MATCH);
+        super.initNewItem(item);
     }
 
     protected Map<String, Object> getAttributes(MetaClass metaClass) {
@@ -47,10 +58,7 @@ public class RuleDetailEdit extends AbstractEditor<RuleDetail> {
 
     @Override
     protected void postInit() {
-        Rule rule = (Rule) myParams.get("rule");
-        if( rule == null ) {
-            rule = ruleDs.getItem();
-        }
+        Rule rule = getItem().getRule();
         if( rule != null ) {
             baseField.setOptionsMap(getAttributes(metadata.getClass(rule.getBaseRecordType())));
             targetField.setOptionsMap(getAttributes(metadata.getClass(rule.getMatchingRecordType())));

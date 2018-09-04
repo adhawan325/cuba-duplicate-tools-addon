@@ -1,14 +1,10 @@
 package com.non.dta.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import javax.validation.constraints.NotNull;
 import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import com.haulmont.cuba.core.entity.StandardEntity;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NamePattern("%s %s %s|baseRecordField,matchingRecordField,matchType")
 @Table(name = "NONDTA_RULE_DETAIL")

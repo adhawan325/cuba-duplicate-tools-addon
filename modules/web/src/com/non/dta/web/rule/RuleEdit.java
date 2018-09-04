@@ -10,7 +10,6 @@ import com.non.dta.service.DuplicateRuleService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,6 +34,7 @@ public class RuleEdit extends AbstractEditor<Rule> {
 
     @Override
     public void init(Map<String, Object> params) {
+        caseSensitiveField.setVisible(false);
         baseEntityLookup.setOptionsMap(getEntitiesLookupFieldOptions());
         targetLookup.setOptionsMap(getEntitiesLookupFieldOptions());
         baseEntityLookup.setRequired(true);

@@ -1,0 +1,78 @@
+<%
+screenId = "${entity.name}.edit"
+controllerName = "${entity.className}Edit"
+def datasourceId = "${entity.uncapitalizedClassName}Ds"
+def nestedDatasourceProperties = api.evaluateScript('screen/nestedDatasourceProperties.groovy', ['view': editView])
+def nestedCollectionDatasourceProperties = api.evaluateScript('screen/nestedCollectionDatasourceProperties.groovy', ['view': editView])
+def optionsDatasourceAttrs = api.evaluateScript('screen/optionsDatasources.groovy', ['view': editView])
+def createScrollBox = editView.allProperties.size() > 10
+def collectionAttributesTable = []
+def platform_6_1_plus = api.compareWithCurrentPlatformVersion('6.0-SNAPSHOT') > 0
+def frameName = api.compareWithCurrentPlatformVersion('5.999-SNAPSHOT') > 0 ? 'frame' : 'iframe'
+nestedCollectionDatasourceProperties.each { prop ->
+    def binding = [
+        'nestedCollectionDatasourceProperty': prop,
+        'view': editView,
+        'createGroupBox': true]
+    def tableXml = api.processSnippet('screen/collectionAttributeTable.xml', binding)
+    if (!binding['isError']) {
+        collectionAttributesTable << tableXml
+    }
+}
+def fieldGroupXml = api.processSnippet('screen/fieldGroup.xml',
+        ['view': editView,
+        'api': api,
+        'datasourceId': datasourceId,
+        'columnWidth': fieldColumnWidth,
+        'fieldGroupId': 'fieldGroup'])
+%><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="${xmlNamespace_window}"
+        caption="msg://editorCaption"
+        class="${packageName}.${controllerName}"
+        datasource="${datasourceId}"
+        focusComponent="fieldGroup"
+        messagesPack="${packageName}">
+    <dsContext>
+        <datasource id="${datasourceId}"
+                    class="${entity.fqn}"<%if (!entity.isDeepInheritor('com.haulmont.cuba.core.entity.AbstractNotPersistentEntity')) {%>
+                    view="${editView.name}"<%}%><% print ((!nestedDatasourceProperties && !nestedCollectionDatasourceProperties) ? '/>' : '>')%>
+        <%
+        nestedDatasourceProperties.each {%>
+            <datasource id="${it}Ds" property="${it}"/>
+        <%}
+
+        nestedCollectionDatasourceProperties.each {%>
+            <collectionDatasource id="${it}Ds" property="${it}"/>
+        <%}
+        %><%if (nestedDatasourceProperties || nestedCollectionDatasourceProperties) {%></datasource><%}%>
+        <%if (optionsDatasourceAttrs) {
+            optionsDatasourceAttrs.each {attr ->%>
+                <collectionDatasource id="${api.pluralForm(attr.name)}Ds" class="${attr.entityType.fqn}" view="_minimal">
+                    <query>
+                        <![CDATA[select e from ${attr.entityType.name} e]]>
+                    </query>
+                </collectionDatasource>
+        <%}}%>
+    </dsContext>
+    <%if (modalDialog && platform_6_1_plus) {%>
+    <dialogMode height="AUTO"
+                width="600"
+                modal="true"
+                forceDialog="true"/>
+    <%} else if (platform_6_1_plus) {%>
+    <dialogMode height="600"
+                width="800"/><%}%>
+    <layout expand=<%(createScrollBox ? print("'scrollBox'") : print("'windowActions'"))%> spacing="true">
+    <%if (createScrollBox) {
+        print('<scrollBox id="scrollBox" spacing="true">')}%>
+        ${fieldGroupXml}
+        <%collectionAttributesTable.each{table ->%>
+            ${table}
+        <%}%>
+        <%if (createScrollBox) {
+        print('</scrollBox>')
+        }%>
+        <${frameName} id="windowActions"
+                screen=<%(extendedWindowActions ? print("'extendedEditWindowActions'") : print("'editWindowActions'"))%>/>
+    </layout>
+</window>
