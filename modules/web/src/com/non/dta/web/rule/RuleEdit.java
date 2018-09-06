@@ -57,6 +57,17 @@ public class RuleEdit extends AbstractEditor<Rule> {
                 }
         );
 
+        ruleDetailTableCreateAction.setBeforeActionPerformedHandler(new Action.BeforeActionPerformedHandler() {
+            @Override
+            public boolean beforeActionPerformed() {
+                boolean returnValue = true;
+                if (getItem().getBaseRecordType() == null || getItem().getMatchingRecordType() == null) {
+                    showNotification("Please select a Base Entity and a Matching Entity.");
+                    returnValue = false;
+                }
+                return returnValue;
+            }
+        });
         super.postInit();
     }
 
