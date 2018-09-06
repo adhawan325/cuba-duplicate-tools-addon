@@ -10,6 +10,7 @@ import com.haulmont.cuba.core.sys.listener.EntityListenerManager;
 import com.haulmont.cuba.security.entity.EntityOp;
 import com.non.dta.entity.Rule;
 import com.non.dta.entity.RuleDetail;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -32,6 +33,8 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     private PersistenceTools persistenceTools;
     @Inject
     private Persistence persistence;
+    @Inject
+    private Logger log;
 
     @Override
     public List<MetaClass> getAccessibleEntities() {
@@ -61,6 +64,7 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     public boolean checkIfDuplicate(Entity entity) {
         boolean isDuplicate = false;
         List<Rule> rules = getConfiguredRulesForEntity(entity.getMetaClass().toString());
+
         for (Rule rule : rules) {
             if (rule.getRuleDetail() != null && !rule.getRuleDetail().isEmpty() && findDuplicateEntityByQuery(entity, rule) > 0) {
                 isDuplicate = true;
@@ -81,6 +85,16 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
     }
 
 
+    private boolean isRuleConfiguredForModifiedFields(Entity entity, Rule rule) {
+        boolean isConfigured = false;
+        for (RuleDetail detail : rule.getRuleDetail()) {
+            if (persistenceTools.isDirty(entity, detail.getBaseRecordField())) {
+                isConfigured = true;
+                break;
+            }
+        }
+        return isConfigured;
+    }
 
 
     private int findDuplicateEntityByQuery(Entity entity, Rule rule) {
@@ -93,27 +107,27 @@ public class DuplicateRuleServiceBean implements DuplicateRuleService {
             if (matchingClass.getSuperclass().equals(StandardEntity.class)) {
                 isStandardEntity = true;
             }
-            if (entity.getValue(detail.getBaseRecordField()) != null) {
-                sb.append(" and e.");
-                sb.append(detail.getMatchingRecordField());
-                if (isStandardEntity) {
-                    sb.append(".id");
-                }
-                sb.append(" = :");
-                sb.append(detail.getMatchingRecordField());
-                if (isStandardEntity) {
-                    params.put(detail.getMatchingRecordField(), entity.getValueEx(detail.getMatchingRecordField() + ".id"));
-                } else {
-                    params.put(detail.getMatchingRecordField(), entity.getValue(detail.getMatchingRecordField()));
-                }
+            sb.append(" and e.");
+            sb.append(detail.getMatchingRecordField());
+            if (isStandardEntity) {
+                sb.append(".id");
             }
+            sb.append(" = :");
+            sb.append(detail.getMatchingRecordField());
+            if (isStandardEntity) {
+                params.put(detail.getMatchingRecordField(), entity.getValueEx(detail.getMatchingRecordField() + ".id"));
+            } else {
+                params.put(detail.getMatchingRecordField(), entity.getValue(detail.getMatchingRecordField()));
+            }
+
             isStandardEntity = false;
         }
 
         LoadContext loadContext = LoadContext.create(metadata.getSession().getClass(rule.getMatchingRecordType()).getJavaClass());
         LoadContext.Query query = new LoadContext.Query(sb.toString());
         query.setParameter("entityId", entity.getId());
-        for ( Map.Entry<String, Object> param: params.entrySet() ){
+        log.debug(query.getQueryString());
+        for (Map.Entry<String, Object> param : params.entrySet()) {
             query.setParameter(param.getKey(), param.getValue());
         }
         loadContext.setQuery(query);

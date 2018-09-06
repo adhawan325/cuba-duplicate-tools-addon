@@ -25,6 +25,11 @@
                 <field property="useId"/>
             </column>
         </fieldGroup>
+        <vbox spacing="true">
+            <label responsive="true"
+                   stylename="colored bold"
+                   value="msg://duplicateRuleDetailLabel"/>
+        </vbox>
         <hbox spacing="true">
             <lookupField id="baseField"
                          caption="Base Entity Field"/>

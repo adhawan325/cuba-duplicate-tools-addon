@@ -31,7 +31,6 @@ public class RuleEdit extends AbstractEditor<Rule> {
     @Named("ruleDetailTable.create")
     private CreateAction ruleDetailTableCreateAction;
 
-
     @Override
     public void init(Map<String, Object> params) {
         caseSensitiveField.setVisible(false);
