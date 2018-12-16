@@ -1,6 +1,5 @@
-
 buildscript {
-    ext.cubaVersion = '6.9.5'
+    ext.cubaVersion = '6.10.5'
     repositories {
         
         maven {
@@ -75,7 +74,9 @@ configure([globalModule, coreModule, webModule]) {
 }
 
 configure(globalModule) {
-    task enhance(type: CubaEnhancing)
+    entitiesEnhancing {
+        main { enabled = true }
+    }
 
     jar {
         manifest {
@@ -231,13 +232,10 @@ subprojects {
 
             websiteUrl = 'https://github.com/adhawan325/cuba-duplicate-tools-addon'
             issueTrackerUrl = 'https://github.com/adhawan325/cuba-duplicate-tools-addon/issues'
-            vcsUrl = 'https://github.com/jupiter/amazing-search.git' // mandatory for Open Source projects
+            vcsUrl = 'https://github.com/adhawan325/cuba-duplicate-tools-addon.git' // mandatory for Open Source projects
 
             licenses = ["Apache-2.0"]
             labels = ['cuba-platform', 'opensource']
-
-            //githubRepo = 'amazingsearch/cuba-platform' // optional Github repository
-            //githubReleaseNotesFile = 'README.md' // optional Github readme file
         }
     }
 }
